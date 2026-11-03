@@ -1,0 +1,17 @@
+
+name: Trade Bot
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 14 * * 1-5'
+
+jobs:
+  trade-bot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Test bot
+        run: echo "Trade bot workflow started"
