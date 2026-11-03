@@ -1,10 +1,12 @@
-
 name: Trade Bot
 
 on:
   workflow_dispatch:
   schedule:
     - cron: '0 14 * * 1-5'
+
+permissions:
+  contents: read
 
 jobs:
   trade-bot:
@@ -13,5 +15,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Test bot
-        run: echo "Trade bot workflow started"
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install yfinance pandas numpy
+
+      - name: Run trade bot
+        run: python trade_bot.py
