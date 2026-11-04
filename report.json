@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-03T22:08:38.993091+00:00",
+  "timestamp": "2026-11-04T07:40:52.818936+00:00",
   "mode": "PAPER_ONLY",
   "starting_capital_usd": 100.0,
   "realized_pnl_usd": 0.0,
@@ -14,18 +14,7 @@
     "take_price": 435.51,
     "entry_bar_date": "2026-11-03"
   },
-  "events": [
-    {
-      "action": "OPEN_SHORT",
-      "symbol": "AMD",
-      "entry_price": 483.9,
-      "quantity": 0.08266171,
-      "entry_time": "2026-11-03T22:08:38.993091+00:00",
-      "stop_price": 508.095,
-      "take_price": 435.51,
-      "entry_bar_date": "2026-11-03"
-    }
-  ],
+  "events": [],
   "results": [
     {
       "symbol": "NVDA",
