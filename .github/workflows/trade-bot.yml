@@ -4,7 +4,7 @@ name: Trade Bot
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 14 * * 1-5'
+    - cron: '30 22 * * 1-5'
 
 permissions:
   contents: write
