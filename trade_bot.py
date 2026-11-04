@@ -33,7 +33,7 @@ def analyze(symbol):
     bar_date = close.index[-1].date()
     if not 0 <= (datetime.now(timezone.utc).date() - bar_date).days <= 5:
         raise ValueError('Stale market data')
-       previous = float(close.iloc[-2])
+           previous = float(close.iloc[-2])
     if previous <= 0 or abs(price / previous - 1) > 0.25:
         raise ValueError('Large daily price jump; verify market data')
     bearish = (price < float(ema20.iloc[-1]) < float(ema50.iloc[-1])
