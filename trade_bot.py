@@ -5,7 +5,7 @@ from pathlib import Path
 import yfinance as yf
 
 CAPITAL = 100.0
-RISK_PER_TRADE = 0.02
+RISK_PER_TRADE = 0.01
 STOP_PCT = 0.05
 TAKE_PCT = 0.10
 SYMBOLS = ['NVDA', 'TSLA', 'AMD', 'PLTR', 'AAPL', 'QQQ']
