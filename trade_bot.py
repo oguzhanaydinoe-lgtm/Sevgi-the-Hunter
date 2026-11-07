@@ -29,32 +29,81 @@ def save(path, obj):
 
 
 def constituents():
-    response = requests.get(
-        NASDAQ_URL,
-        headers={"User-Agent": "Mozilla/5.0 (compatible; paper-research-bot/1.0)"},
-        timeout=25,
-    )
-    response.raise_for_status()
-    tables = pd.read_html(StringIO(response.text))
-    for table in tables:
-        # Wikipedia normally labels this column "Ticker" or "Symbol".
-        # Normalize multi-level and whitespace-variant headers as well.
-        cols = [(c, " ".join(str(part) for part in c).lower()
-                 if isinstance(c, tuple) else str(c).lower())
-                for c in table.columns]
-        symbol_col = next((c for c, label in cols
-                           if any(word in label for word in ("ticker", "symbol"))), None)
-        if symbol_col is None or not 90 <= len(table) <= 120:
-            continue
-        symbols = sorted(set(
-            str(s).strip().upper().replace(".", "-")
-            for s in table[symbol_col].dropna()
-        ))
-        symbols = [s for s in symbols
-                   if s and s != "NAN" and s.replace("-", "").isalnum()]
+    """Fetch the full Nasdaq-100 universe from independent sources; never use a partial list."""
+    import re
+    errors = []
+
+    # Primary: Wikipedia's Nasdaq-100 constituent table.
+    try:
+        response = requests.get(
+            NASDAQ_URL,
+            headers={"User-Agent": "Mozilla/5.0 (compatible; research-scanner/1.0)"},
+            timeout=25,
+        )
+        response.raise_for_status()
+        tables = pd.read_html(StringIO(response.text))
+        for table in tables:
+            columns = {
+                c: " ".join(map(str, c)).lower() if isinstance(c, tuple)
+                else str(c).lower()
+                for c in table.columns
+            }
+            symbol_col = next(
+                (c for c, label in columns.items()
+                 if any(word in label for word in ("ticker", "symbol"))),
+                None,
+            )
+            if symbol_col is None:
+                continue
+            values = [
+                str(x).strip().upper().replace(".", "-")
+                for x in table[symbol_col].dropna()
+            ]
+            symbols = sorted({
+                x for x in values
+                if re.fullmatch(r"[A-Z]{1,5}(?:-[A-Z])?", x)
+            })
+            if 90 <= len(symbols) <= 110:
+                print(f"Universe: Wikipedia, {len(symbols)} symbols", flush=True)
+                return symbols
+        errors.append("Wikipedia: no valid constituent table found")
+    except Exception as exc:
+        errors.append(f"Wikipedia: {type(exc).__name__}: {exc}")
+
+    # Secondary: Nasdaq's public Nasdaq-100 constituent API.
+    try:
+        response = requests.get(
+            "https://api.nasdaq.com/api/quote/list-type/nasdaq100",
+            headers={
+                "User-Agent": "Mozilla/5.0",
+                "Accept": "application/json, text/plain, */*",
+                "Origin": "https://www.nasdaq.com",
+                "Referer": "https://www.nasdaq.com/",
+            },
+            timeout=25,
+        )
+        response.raise_for_status()
+        payload = response.json()
+        data = payload.get("data") or {}
+        rows = data.get("rows") or data.get("data") or []
+        if isinstance(rows, dict):
+            rows = rows.get("rows") or []
+        symbols = sorted({
+            str(row.get("symbol") or row.get("ticker") or "").strip().upper().replace(".", "-")
+            for row in rows if isinstance(row, dict)
+        })
+        symbols = [x for x in symbols if re.fullmatch(r"[A-Z]{1,5}(?:-[A-Z])?", x)]
         if 90 <= len(symbols) <= 110:
+            print(f"Universe: Nasdaq API, {len(symbols)} symbols", flush=True)
             return symbols
-    raise RuntimeError("Nasdaq-100 constituent table unavailable; refusing partial universe")
+        errors.append(f"Nasdaq API: {len(symbols)} valid symbols")
+    except Exception as exc:
+        errors.append(f"Nasdaq API: {type(exc).__name__}: {exc}")
+
+    raise RuntimeError(
+        "Nasdaq-100 constituent sources unavailable; refusing partial universe. "
+        + " | ".join(errors)
+    )
 
 
 def load_state():
