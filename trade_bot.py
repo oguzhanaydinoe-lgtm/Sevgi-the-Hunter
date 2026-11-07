@@ -37,16 +37,21 @@ def constituents():
     response.raise_for_status()
     tables = pd.read_html(StringIO(response.text))
     for table in tables:
-        cols = [str(c).lower() for c in table.columns]
-        symbol_col = next((c for c, label in zip(table.columns, cols)
-                           if "ticker" in label), None)
-        if symbol_col is None or len(table) < 90 or len(table) > 120:
+        # Wikipedia normally labels this column "Ticker" or "Symbol".
+        # Normalize multi-level and whitespace-variant headers as well.
+        cols = [(c, " ".join(str(part) for part in c).lower()
+                 if isinstance(c, tuple) else str(c).lower())
+                for c in table.columns]
+        symbol_col = next((c for c, label in cols
+                           if any(word in label for word in ("ticker", "symbol"))), None)
+        if symbol_col is None or not 90 <= len(table) <= 120:
             continue
         symbols = sorted(set(
             str(s).strip().upper().replace(".", "-")
             for s in table[symbol_col].dropna()
         ))
-        symbols = [s for s in symbols if s and s != "NAN" and s.replace("-", "").isalnum()]
+        symbols = [s for s in symbols
+                   if s and s != "NAN" and s.replace("-", "").isalnum()]
         if 90 <= len(symbols) <= 110:
             return symbols
     raise RuntimeError("Nasdaq-100 constituent table unavailable; refusing partial universe")
