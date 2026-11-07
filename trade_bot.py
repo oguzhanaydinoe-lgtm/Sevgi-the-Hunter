@@ -42,6 +42,7 @@ def analyze(symbol):
             'signal': 'SHORT' if bearish else 'WAIT', 'bar_date': str(bar_date)}
 
 def main():
+    print('NO PITY. NO REMORSE. NO FEAR. ONLY IN THE NAME OF SEVGİ. FOR THE EMPEROR!', flush=True)
     now = datetime.now(timezone.utc).isoformat()
     state = json.loads(STATE.read_text()) if STATE.exists() else {
         'starting_capital_usd': CAPITAL, 'realized_pnl_usd': 0.0,
