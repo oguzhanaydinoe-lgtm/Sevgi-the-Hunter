@@ -11,7 +11,7 @@ import pandas as pd
 import yfinance as yf
 
 CAPITAL = 100.0
-RISK_PER_TRADE = 0.01
+RISK_PER_TRADE = 0.05
 STOP_PCT = 0.05
 TAKE_PCT = 0.10
 SYMBOLS = ('NVDA', 'TSLA', 'AMD', 'PLTR', 'AAPL', 'QQQ')
