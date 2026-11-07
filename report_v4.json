@@ -1,0 +1,1086 @@
+{
+  "timestamp": "2026-11-07T09:51:25.129645+00:00",
+  "mode": "PAPER_ONLY_SHORT_V4",
+  "universe_count": 101,
+  "analyzed_count": 101,
+  "short_signals": 31,
+  "starting_capital_usd": 100.0,
+  "realized_pnl_usd": 0.0,
+  "unrealized_pnl_usd": 0.0,
+  "estimated_equity_usd": 100.0,
+  "positions": [
+    {
+      "symbol": "ALNY",
+      "entry_price": 155.94,
+      "quantity": 0.21375743,
+      "entry_time": "2026-11-07T09:51:25.129645+00:00",
+      "stop_price": 163.737,
+      "take_price": 140.346,
+      "entry_bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "FTNT",
+      "entry_price": 118.84,
+      "quantity": 0.28048917,
+      "entry_time": "2026-11-07T09:51:25.129645+00:00",
+      "stop_price": 124.782,
+      "take_price": 106.956,
+      "entry_bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "AXON",
+      "entry_price": 313.0,
+      "quantity": 0.10649627,
+      "entry_time": "2026-11-07T09:51:25.129645+00:00",
+      "stop_price": 328.65,
+      "take_price": 281.7,
+      "entry_bar_date": "2026-11-06"
+    }
+  ],
+  "events": [
+    {
+      "action": "OPEN_SHORT",
+      "symbol": "ALNY",
+      "entry_price": 155.94,
+      "quantity": 0.21375743,
+      "entry_time": "2026-11-07T09:51:25.129645+00:00",
+      "stop_price": 163.737,
+      "take_price": 140.346,
+      "entry_bar_date": "2026-11-06"
+    },
+    {
+      "action": "OPEN_SHORT",
+      "symbol": "FTNT",
+      "entry_price": 118.84,
+      "quantity": 0.28048917,
+      "entry_time": "2026-11-07T09:51:25.129645+00:00",
+      "stop_price": 124.782,
+      "take_price": 106.956,
+      "entry_bar_date": "2026-11-06"
+    },
+    {
+      "action": "OPEN_SHORT",
+      "symbol": "AXON",
+      "entry_price": 313.0,
+      "quantity": 0.10649627,
+      "entry_time": "2026-11-07T09:51:25.129645+00:00",
+      "stop_price": 328.65,
+      "take_price": 281.7,
+      "entry_bar_date": "2026-11-06"
+    }
+  ],
+  "results": [
+    {
+      "symbol": "ALNY",
+      "price": 155.94,
+      "rsi": 21.78,
+      "ema20": 195.4061,
+      "ema50": 220.35,
+      "high_volume": true,
+      "signal": "SHORT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "FTNT",
+      "price": 118.84,
+      "rsi": 23.09,
+      "ema20": 152.8901,
+      "ema50": 162.8042,
+      "high_volume": true,
+      "signal": "SHORT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "AXON",
+      "price": 313.0,
+      "rsi": 23.65,
+      "ema20": 408.7014,
+      "ema50": 445.8125,
+      "high_volume": true,
+      "signal": "SHORT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "TER",
+      "price": 218.22,
+      "rsi": 24.32,
+      "ema20": 298.5289,
+      "ema50": 335.8641,
+      "high_volume": true,
+      "signal": "SHORT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "STX",
+      "price": 460.99,
+      "rsi": 24.58,
+      "ema20": 640.5944,
+      "ema50": 729.6871,
+      "high_volume": true,
+      "signal": "SHORT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "INTC",
+      "price": 56.28,
+      "rsi": 25.68,
+      "ema20": 79.6754,
+      "ema50": 92.0018,
+      "high_volume": true,
+      "signal": "SHORT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "MRVL",
+      "price": 141.2,
+      "rsi": 26.2,
+      "ema20": 205.4903,
+      "ema50": 224.6779,
+      "high_volume": true,
+      "signal": "SHORT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "SNDK",
+      "price": 835.06,
+      "rsi": 26.37,
+      "ema20": 1225.0116,
+      "ema50": 1399.6579,
+      "high_volume": true,
+      "signal": "SHORT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "MCHP",
+      "price": 58.35,
+      "rsi": 26.96,
+      "ema20": 73.917,
+      "ema50": 75.413,
+      "high_volume": true,
+      "signal": "SHORT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "DDOG",
+      "price": 179.04,
+      "rsi": 28.29,
+      "ema20": 236.9769,
+      "ema50": 247.5823,
+      "high_volume": true,
+      "signal": "SHORT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "WDC",
+      "price": 263.78,
+      "rsi": 28.39,
+      "ema20": 352.2487,
+      "ema50": 396.6176,
+      "high_volume": true,
+      "signal": "SHORT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "CSCO",
+      "price": 93.85,
+      "rsi": 28.42,
+      "ema20": 105.2879,
+      "ema50": 108.4344,
+      "high_volume": true,
+      "signal": "SHORT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "ALAB",
+      "price": 190.71,
+      "rsi": 29.13,
+      "ema20": 261.4666,
+      "ema50": 292.1345,
+      "high_volume": true,
+      "signal": "SHORT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "LRCX",
+      "price": 200.44,
+      "rsi": 30.41,
+      "ema20": 245.8643,
+      "ema50": 274.8224,
+      "high_volume": true,
+      "signal": "SHORT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "AMAT",
+      "price": 332.72,
+      "rsi": 30.52,
+      "ema20": 398.4438,
+      "ema50": 439.775,
+      "high_volume": true,
+      "signal": "SHORT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "MELI",
+      "price": 1510.0,
+      "rsi": 30.87,
+      "ema20": 1706.9473,
+      "ema50": 1775.4418,
+      "high_volume": true,
+      "signal": "SHORT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "NVDA",
+      "price": 186.64,
+      "rsi": 30.91,
+      "ema20": 208.7726,
+      "ema50": 214.8194,
+      "high_volume": true,
+      "signal": "SHORT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "ARM",
+      "price": 174.62,
+      "rsi": 31.05,
+      "ema20": 217.6656,
+      "ema50": 243.0106,
+      "high_volume": true,
+      "signal": "SHORT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "MU",
+      "price": 690.0,
+      "rsi": 31.26,
+      "ema20": 869.1939,
+      "ema50": 924.6171,
+      "high_volume": true,
+      "signal": "SHORT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "PANW",
+      "price": 313.84,
+      "rsi": 32.71,
+      "ema20": 360.3709,
+      "ema50": 366.1652,
+      "high_volume": true,
+      "signal": "SHORT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "AVGO",
+      "price": 293.69,
+      "rsi": 32.83,
+      "ema20": 329.9262,
+      "ema50": 345.5741,
+      "high_volume": true,
+      "signal": "SHORT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "ODFL",
+      "price": 164.92,
+      "rsi": 33.08,
+      "ema20": 178.101,
+      "ema50": 184.2533,
+      "high_volume": true,
+      "signal": "SHORT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "BKR",
+      "price": 47.87,
+      "rsi": 33.35,
+      "ema20": 53.4796,
+      "ema50": 55.8394,
+      "high_volume": true,
+      "signal": "SHORT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "ASML",
+      "price": 1424.75,
+      "rsi": 34.75,
+      "ema20": 1583.2731,
+      "ema50": 1654.7114,
+      "high_volume": true,
+      "signal": "SHORT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "KLAC",
+      "price": 138.49,
+      "rsi": 35.12,
+      "ema20": 158.6666,
+      "ema50": 172.7201,
+      "high_volume": true,
+      "signal": "SHORT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "PCAR",
+      "price": 101.98,
+      "rsi": 35.12,
+      "ema20": 105.9015,
+      "ema50": 111.4395,
+      "high_volume": true,
+      "signal": "SHORT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "AMD",
+      "price": 449.04,
+      "rsi": 38.39,
+      "ema20": 517.347,
+      "ema50": 534.706,
+      "high_volume": true,
+      "signal": "SHORT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "SPCX",
+      "price": 134.27,
+      "rsi": 42.49,
+      "ema20": 142.9413,
+      "ema50": 145.694,
+      "high_volume": true,
+      "signal": "SHORT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "CEG",
+      "price": 249.95,
+      "rsi": 43.3,
+      "ema20": 260.1549,
+      "ema50": 265.3613,
+      "high_volume": true,
+      "signal": "SHORT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "RKLB",
+      "price": 53.07,
+      "rsi": 43.79,
+      "ema20": 55.9688,
+      "ema50": 61.7423,
+      "high_volume": true,
+      "signal": "SHORT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "QCOM",
+      "price": 165.41,
+      "rsi": 44.37,
+      "ema20": 172.6017,
+      "ema50": 174.9811,
+      "high_volume": true,
+      "signal": "SHORT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "LITE",
+      "price": 538.59,
+      "rsi": 29.52,
+      "ema20": 775.3666,
+      "ema50": 843.9677,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "GOOGL",
+      "price": 284.78,
+      "rsi": 29.85,
+      "ema20": 309.0643,
+      "ema50": 327.1876,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "GOOG",
+      "price": 283.93,
+      "rsi": 29.87,
+      "ema20": 306.7128,
+      "ema50": 324.4139,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "PLTR",
+      "price": 160.38,
+      "rsi": 31.12,
+      "ema20": 183.6012,
+      "ema50": 182.1241,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "CRWV",
+      "price": 46.4,
+      "rsi": 32.7,
+      "ema20": 59.3077,
+      "ema50": 70.49,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "FANG",
+      "price": 178.96,
+      "rsi": 33.84,
+      "ema20": 194.9059,
+      "ema50": 195.3301,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "NBIS",
+      "price": 129.49,
+      "rsi": 34.23,
+      "ema20": 164.84,
+      "ema50": 188.7423,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "CRWD",
+      "price": 216.9,
+      "rsi": 35.29,
+      "ema20": 244.1088,
+      "ema50": 240.1422,
+      "high_volume": true,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "ADI",
+      "price": 363.56,
+      "rsi": 36.23,
+      "ema20": 400.3595,
+      "ema50": 394.8343,
+      "high_volume": true,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "META",
+      "price": 610.15,
+      "rsi": 36.65,
+      "ema20": 647.8128,
+      "ema50": 658.7295,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "NFLX",
+      "price": 63.41,
+      "rsi": 39.64,
+      "ema20": 65.8184,
+      "ema50": 69.2834,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "MSTR",
+      "price": 128.93,
+      "rsi": 41.31,
+      "ema20": 140.0777,
+      "ema50": 138.1352,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "ADBE",
+      "price": 239.3,
+      "rsi": 42.27,
+      "ema20": 248.4585,
+      "ema50": 248.9479,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "TSLA",
+      "price": 358.22,
+      "rsi": 42.32,
+      "ema20": 379.7965,
+      "ema50": 373.914,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "SHOP",
+      "price": 148.91,
+      "rsi": 42.71,
+      "ema20": 158.4777,
+      "ema50": 154.3029,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "DXCM",
+      "price": 79.41,
+      "rsi": 42.81,
+      "ema20": 82.9294,
+      "ema50": 83.7133,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "TXN",
+      "price": 277.36,
+      "rsi": 43.08,
+      "ema20": 291.4562,
+      "ema50": 284.2846,
+      "high_volume": true,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "HONA",
+      "price": 152.92,
+      "rsi": 43.15,
+      "ema20": 159.1552,
+      "ema50": 164.1771,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "MPWR",
+      "price": 1190.4399,
+      "rsi": 45.1,
+      "ema20": 1238.3892,
+      "ema50": 1268.1094,
+      "high_volume": true,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "WDAY",
+      "price": 192.9,
+      "rsi": 45.37,
+      "ema20": 197.9865,
+      "ema50": 192.2267,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "CSX",
+      "price": 49.12,
+      "rsi": 45.86,
+      "ema20": 50.2202,
+      "ema50": 49.4617,
+      "high_volume": true,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "DASH",
+      "price": 179.67,
+      "rsi": 45.9,
+      "ema20": 184.5418,
+      "ema50": 190.5827,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "CDNS",
+      "price": 319.92,
+      "rsi": 46.53,
+      "ema20": 326.9641,
+      "ema50": 327.2805,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "SNPS",
+      "price": 450.46,
+      "rsi": 47.61,
+      "ema20": 459.5113,
+      "ema50": 447.8375,
+      "high_volume": true,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "MNST",
+      "price": 45.72,
+      "rsi": 48.73,
+      "ema20": 46.2747,
+      "ema50": 45.6805,
+      "high_volume": true,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "ROST",
+      "price": 231.09,
+      "rsi": 48.77,
+      "ema20": 232.7495,
+      "ema50": 232.0649,
+      "high_volume": true,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "AEP",
+      "price": 126.53,
+      "rsi": 49.24,
+      "ema20": 127.3571,
+      "ema50": 125.9833,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "BKNG",
+      "price": 160.67,
+      "rsi": 49.76,
+      "ema20": 159.3958,
+      "ema50": 166.3772,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "TRI",
+      "price": 112.57,
+      "rsi": 50.84,
+      "ema20": 113.4861,
+      "ema50": 107.9125,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "AAPL",
+      "price": 342.37,
+      "rsi": 51.5,
+      "ema20": 342.0104,
+      "ema50": 336.0617,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "MSFT",
+      "price": 530.61,
+      "rsi": 52.1,
+      "ema20": 528.3098,
+      "ema50": 512.8738,
+      "high_volume": true,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "NXPI",
+      "price": 248.29,
+      "rsi": 52.38,
+      "ema20": 247.2623,
+      "ema50": 241.9326,
+      "high_volume": true,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "ORLY",
+      "price": 89.89,
+      "rsi": 52.71,
+      "ema20": 89.417,
+      "ema50": 88.3549,
+      "high_volume": true,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "HON",
+      "price": 220.05,
+      "rsi": 53.63,
+      "ema20": 217.9741,
+      "ema50": 216.6431,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "TMUS",
+      "price": 162.01,
+      "rsi": 54.02,
+      "ema20": 157.0392,
+      "ema50": 162.9178,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "AMZN",
+      "price": 259.3,
+      "rsi": 54.18,
+      "ema20": 254.0951,
+      "ema50": 254.0881,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "INTU",
+      "price": 341.5,
+      "rsi": 55.68,
+      "ema20": 334.3448,
+      "ema50": 322.7864,
+      "high_volume": true,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "ISRG",
+      "price": 452.8,
+      "rsi": 57.09,
+      "ema20": 441.1523,
+      "ema50": 420.9917,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "VRTX",
+      "price": 547.09,
+      "rsi": 57.73,
+      "ema20": 530.9932,
+      "ema50": 523.2044,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "PDD",
+      "price": 83.03,
+      "rsi": 58.32,
+      "ema20": 80.5202,
+      "ema50": 80.8333,
+      "high_volume": true,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "CTAS",
+      "price": 222.36,
+      "rsi": 58.75,
+      "ema20": 217.7955,
+      "ema50": 209.7428,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "MDLZ",
+      "price": 66.02,
+      "rsi": 59.62,
+      "ema20": 64.0088,
+      "ema50": 62.5434,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "PAYX",
+      "price": 117.06,
+      "rsi": 59.85,
+      "ema20": 112.7725,
+      "ema50": 111.5614,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "LIN",
+      "price": 515.25,
+      "rsi": 60.03,
+      "ema20": 506.3418,
+      "ema50": 496.5885,
+      "high_volume": true,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "FAST",
+      "price": 52.99,
+      "rsi": 60.12,
+      "ema20": 51.8936,
+      "ema50": 50.827,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "SBUX",
+      "price": 105.41,
+      "rsi": 60.18,
+      "ema20": 102.2476,
+      "ema50": 100.6927,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "GILD",
+      "price": 166.89,
+      "rsi": 60.27,
+      "ema20": 161.5151,
+      "ema50": 154.0442,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "EXC",
+      "price": 45.62,
+      "rsi": 60.42,
+      "ema20": 44.6329,
+      "ema50": 43.8808,
+      "high_volume": true,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "AMGN",
+      "price": 460.42,
+      "rsi": 60.48,
+      "ema20": 447.6481,
+      "ema50": 428.7208,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "TTWO",
+      "price": 214.87,
+      "rsi": 60.49,
+      "ema20": 203.9284,
+      "ema50": 210.3856,
+      "high_volume": true,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "CCEP",
+      "price": 116.13,
+      "rsi": 61.53,
+      "ema20": 111.7038,
+      "ema50": 108.6469,
+      "high_volume": true,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "PYPL",
+      "price": 59.24,
+      "rsi": 61.53,
+      "ema20": 57.2908,
+      "ema50": 56.0331,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "ADSK",
+      "price": 261.72,
+      "rsi": 61.6,
+      "ema20": 248.7961,
+      "ema50": 238.9749,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "ADP",
+      "price": 303.35,
+      "rsi": 62.32,
+      "ema20": 292.4185,
+      "ema50": 281.6883,
+      "high_volume": true,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "PEP",
+      "price": 141.34,
+      "rsi": 62.41,
+      "ema20": 135.9997,
+      "ema50": 134.6209,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "XEL",
+      "price": 79.67,
+      "rsi": 62.51,
+      "ema20": 77.7168,
+      "ema50": 76.3224,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "REGN",
+      "price": 904.35,
+      "rsi": 63.06,
+      "ema20": 855.1335,
+      "ema50": 812.2651,
+      "high_volume": true,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "CMCSA",
+      "price": 24.39,
+      "rsi": 63.46,
+      "ema20": 23.0077,
+      "ema50": 22.9555,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "WMT",
+      "price": 125.52,
+      "rsi": 63.67,
+      "ema20": 120.7916,
+      "ema50": 115.5799,
+      "high_volume": true,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "MRNA",
+      "price": 254.19,
+      "rsi": 63.68,
+      "ema20": 222.9726,
+      "ema50": 192.1849,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "KDP",
+      "price": 36.63,
+      "rsi": 63.99,
+      "ema20": 34.9166,
+      "ema50": 33.3523,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "CPRT",
+      "price": 31.95,
+      "rsi": 64.84,
+      "ema20": 29.9174,
+      "ema50": 29.4639,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "ABNB",
+      "price": 189.99,
+      "rsi": 66.08,
+      "ema20": 171.312,
+      "ema50": 168.7766,
+      "high_volume": true,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "COST",
+      "price": 1053.5601,
+      "rsi": 67.56,
+      "ema20": 1005.1026,
+      "ema50": 972.0781,
+      "high_volume": true,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "MAR",
+      "price": 416.47,
+      "rsi": 69.32,
+      "ema20": 397.5188,
+      "ema50": 379.2674,
+      "high_volume": true,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "FER",
+      "price": 58.71,
+      "rsi": 69.85,
+      "ema20": 54.1146,
+      "ema50": 54.5684,
+      "high_volume": true,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "IDXX",
+      "price": 676.04,
+      "rsi": 70.88,
+      "ema20": 599.9709,
+      "ema50": 567.4851,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "ROP",
+      "price": 476.6,
+      "rsi": 71.81,
+      "ema20": 439.5022,
+      "ema50": 410.502,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "GEHC",
+      "price": 82.38,
+      "rsi": 71.83,
+      "ema20": 75.4654,
+      "ema50": 71.3975,
+      "high_volume": false,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "APP",
+      "price": 391.22,
+      "rsi": 76.31,
+      "ema20": 283.5497,
+      "ema50": 300.1575,
+      "high_volume": true,
+      "signal": "WAIT",
+      "bar_date": "2026-11-06"
+    }
+  ],
+  "errors": {},
+  "assumptions": "Daily close paper simulation, fractional shares; no borrow fees, slippage, commissions or intraday stop execution. No broker orders."
+}

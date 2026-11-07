@@ -1,0 +1,39 @@
+{
+  "starting_capital_usd": 100.0,
+  "realized_pnl_usd": 0.0,
+  "positions": [
+    {
+      "symbol": "ALNY",
+      "entry_price": 155.94,
+      "quantity": 0.21375743,
+      "entry_time": "2026-11-07T09:51:25.129645+00:00",
+      "stop_price": 163.737,
+      "take_price": 140.346,
+      "entry_bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "FTNT",
+      "entry_price": 118.84,
+      "quantity": 0.28048917,
+      "entry_time": "2026-11-07T09:51:25.129645+00:00",
+      "stop_price": 124.782,
+      "take_price": 106.956,
+      "entry_bar_date": "2026-11-06"
+    },
+    {
+      "symbol": "AXON",
+      "entry_price": 313.0,
+      "quantity": 0.10649627,
+      "entry_time": "2026-11-07T09:51:25.129645+00:00",
+      "stop_price": 328.65,
+      "take_price": 281.7,
+      "entry_bar_date": "2026-11-06"
+    }
+  ],
+  "trades": [],
+  "last_processed_bar": {
+    "ALNY": "2026-11-06",
+    "FTNT": "2026-11-06",
+    "AXON": "2026-11-06"
+  }
+}
