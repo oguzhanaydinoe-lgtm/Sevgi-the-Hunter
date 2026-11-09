@@ -3,6 +3,7 @@ import json
 import math
 import time
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 from io import StringIO
 from pathlib import Path
 
@@ -11,8 +12,8 @@ import requests
 import yfinance as yf
 
 CAPITAL = 100.0
-RISK_PER_TRADE = 0.05
-MAX_PORTFOLIO_RISK = 0.10
+RISK_PER_TRADE = 0.02
+MAX_PORTFOLIO_RISK = 0.06
 MAX_POSITIONS = 3
 STOP_PCT = 0.05
 TAKE_PCT = 0.10
@@ -217,6 +218,14 @@ def main():
          and state["last_processed_bar"].get(q["symbol"]) != q["bar_date"]),
         key=lambda q: q["rsi"],
     )
+    # No new simulated fills outside regular US market hours.
+    # Daily candles remain reference data, NOT intraday execution prices.
+    ny_now = datetime.now(ZoneInfo("America/New_York"))
+    market_open = (ny_now.weekday() < 5 and
+                   (ny_now.hour, ny_now.minute) >= (9, 30) and
+                   (ny_now.hour, ny_now.minute) < (16, 0))
+    if not market_open:
+        candidates = []
     for item in candidates:
         if len(state["positions"]) >= MAX_POSITIONS or equity <= 0:
             break
@@ -246,6 +255,9 @@ def main():
     )
     report = {
         "timestamp": now, "mode": "PAPER_ONLY_SHORT_V4",
+        "market_open_for_new_entries": market_open,
+        "risk_per_trade": RISK_PER_TRADE,
+        "max_portfolio_risk": MAX_PORTFOLIO_RISK,
         "universe_count": len(symbols), "analyzed_count": len(quotes),
         "short_signals": sum(q["signal"] == "SHORT" for q in quotes.values()),
         "starting_capital_usd": CAPITAL,
