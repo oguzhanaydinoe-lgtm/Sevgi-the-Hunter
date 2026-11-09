@@ -1,8 +1,10 @@
 """Nasdaq-100 paper-only short scanner. No broker connectivity."""
 import json
 import math
+import os
 import time
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 from io import StringIO
 from pathlib import Path
 
@@ -12,17 +14,21 @@ import yfinance as yf
 
 CAPITAL = 100.0
 RISK_PER_TRADE = 0.05
-MAX_PORTFOLIO_RISK = 0.10
-MAX_POSITIONS = 3
+MAX_PORTFOLIO_RISK = 0.25
+MAX_POSITIONS = 15
 STOP_PCT = 0.05
 TAKE_PCT = 0.10
-MAX_GROSS_EXPOSURE = 1.0
-STATE = Path("paper_state_v4.json")
-REPORT = Path("report_v4.json")
+MAX_GROSS_EXPOSURE = 1.5
+MAX_SINGLE_POSITION_EXPOSURE = 0.10
+DATA_DIR = Path(os.getenv("DATA_DIR", ".")).resolve()
+STATE = DATA_DIR / "paper_state_v4.json"
+REPORT = DATA_DIR / "report_v4.json"
+SCAN_ONLY = os.getenv("SCAN_ONLY", "1") == "1"
 NASDAQ_URL = "https://en.wikipedia.org/wiki/Nasdaq-100"
 
 
 def save(path, obj):
+    path.parent.mkdir(parents=True, exist_ok=True)
     temp = path.with_suffix(path.suffix + ".tmp")
     temp.write_text(json.dumps(obj, indent=2, allow_nan=False) + "\n")
     temp.replace(path)
@@ -182,9 +188,28 @@ def main():
     now = datetime.now(timezone.utc).isoformat()
     symbols = constituents()
     quotes, errors = fetch_prices(symbols)
-    if len(quotes) < 80:
-        raise RuntimeError(f"Only {len(quotes)}/{len(symbols)} valid quotes; no state changed")
+    if len(quotes) != len(symbols):
+        raise RuntimeError(f"Only {len(quotes)}/{len(symbols)} valid quotes; refusing incomplete Nasdaq-100 scan")
+    if SCAN_ONLY:
+        report = {"timestamp": now, "mode": "PAPER_ONLY_SHORT_V4_SCAN_ONLY",
+                  "universe_count": len(symbols), "analyzed_count": len(quotes),
+                  "short_signals": sum(q["signal"] == "SHORT" for q in quotes.values()),
+                  "results": sorted(quotes.values(), key=lambda q: (q["signal"] != "SHORT", q["rsi"])),
+                  "errors": errors, "events": [], "positions": [],
+                  "note": "Signals only. No paper orders or position/PnL changes. Daily bars are not live execution prices."}
+        save(REPORT, report)
+        print(json.dumps({"event": "scan_complete", "timestamp": now,
+                          "symbols_scanned": len(quotes),
+                          "short_signals": report["short_signals"],
+                          "mode": report["mode"]}), flush=True)
+        return
+    if os.getenv("DATA_DIR") is None or not DATA_DIR.is_dir():
+        raise RuntimeError("Paper trading requires persistent DATA_DIR volume; refusing ephemeral state")
     state = load_state()
+    ny_now = datetime.now(ZoneInfo("America/New_York"))
+    market_open = (ny_now.weekday() < 5 and
+                   (ny_now.hour, ny_now.minute) >= (9, 30) and
+                   (ny_now.hour, ny_now.minute) < (16, 0))
     events = []
     kept = []
     for pos in state["positions"]:
@@ -193,7 +218,7 @@ def main():
             kept.append(pos)
             continue
         price = item["price"]
-        if price >= pos["stop_price"] or price <= pos["take_price"]:
+        if market_open and (price >= pos["stop_price"] or price <= pos["take_price"]):
             pnl = (pos["entry_price"] - price) * pos["quantity"]
             trade = {**pos, "exit_price": price, "exit_time": now,
                      "realized_pnl_usd": round(pnl, 4),
@@ -217,6 +242,10 @@ def main():
          and state["last_processed_bar"].get(q["symbol"]) != q["bar_date"]),
         key=lambda q: q["rsi"],
     )
+    # No new simulated fills outside regular US market hours.
+    # Daily candles remain reference data, NOT intraday execution prices.
+    if not market_open:
+        candidates = []
     for item in candidates:
         if len(state["positions"]) >= MAX_POSITIONS or equity <= 0:
             break
@@ -224,7 +253,8 @@ def main():
         remaining_exposure = max(0.0, equity * MAX_GROSS_EXPOSURE - gross)
         notional = min(equity * RISK_PER_TRADE / STOP_PCT,
                        remaining_risk / STOP_PCT, remaining_exposure,
-                       equity / MAX_POSITIONS)
+                       remaining_exposure,
+                       equity * MAX_SINGLE_POSITION_EXPOSURE)
         if notional < 1.0:
             break
         price = item["price"]
@@ -246,6 +276,12 @@ def main():
     )
     report = {
         "timestamp": now, "mode": "PAPER_ONLY_SHORT_V4",
+        "market_open_for_new_entries": market_open,
+        "risk_per_trade": RISK_PER_TRADE,
+        "max_portfolio_risk": MAX_PORTFOLIO_RISK,
+        "max_positions": MAX_POSITIONS,
+        "max_gross_exposure": MAX_GROSS_EXPOSURE,
+        "max_single_position_exposure": MAX_SINGLE_POSITION_EXPOSURE,
         "universe_count": len(symbols), "analyzed_count": len(quotes),
         "short_signals": sum(q["signal"] == "SHORT" for q in quotes.values()),
         "starting_capital_usd": CAPITAL,
