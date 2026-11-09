@@ -13,12 +13,12 @@ import requests
 import yfinance as yf
 
 CAPITAL = 100.0
-RISK_PER_TRADE = 0.02
-MAX_PORTFOLIO_RISK = 0.06
-MAX_POSITIONS = 3
+RISK_PER_TRADE = 0.05
+MAX_PORTFOLIO_RISK = 0.25
+MAX_POSITIONS = 15
 STOP_PCT = 0.05
 TAKE_PCT = 0.10
-MAX_GROSS_EXPOSURE = 1.0
+MAX_GROSS_EXPOSURE = 1.5
 DATA_DIR = Path(os.getenv("DATA_DIR", ".")).resolve()
 STATE = DATA_DIR / "paper_state_v4.json"
 REPORT = DATA_DIR / "report_v4.json"
@@ -252,7 +252,7 @@ def main():
         remaining_exposure = max(0.0, equity * MAX_GROSS_EXPOSURE - gross)
         notional = min(equity * RISK_PER_TRADE / STOP_PCT,
                        remaining_risk / STOP_PCT, remaining_exposure,
-                       equity / MAX_POSITIONS)
+                       equity * MAX_GROSS_EXPOSURE / MAX_POSITIONS)
         if notional < 1.0:
             break
         price = item["price"]
@@ -277,6 +277,8 @@ def main():
         "market_open_for_new_entries": market_open,
         "risk_per_trade": RISK_PER_TRADE,
         "max_portfolio_risk": MAX_PORTFOLIO_RISK,
+        "max_positions": MAX_POSITIONS,
+        "max_gross_exposure": MAX_GROSS_EXPOSURE,
         "universe_count": len(symbols), "analyzed_count": len(quotes),
         "short_signals": sum(q["signal"] == "SHORT" for q in quotes.values()),
         "starting_capital_usd": CAPITAL,
