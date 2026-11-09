@@ -1,6 +1,7 @@
 """Nasdaq-100 paper-only short scanner. No broker connectivity."""
 import json
 import math
+import os
 import time
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
@@ -18,12 +19,15 @@ MAX_POSITIONS = 3
 STOP_PCT = 0.05
 TAKE_PCT = 0.10
 MAX_GROSS_EXPOSURE = 1.0
-STATE = Path("paper_state_v4.json")
-REPORT = Path("report_v4.json")
+DATA_DIR = Path(os.getenv("DATA_DIR", ".")).resolve()
+STATE = DATA_DIR / "paper_state_v4.json"
+REPORT = DATA_DIR / "report_v4.json"
+SCAN_ONLY = os.getenv("SCAN_ONLY", "1") == "1"
 NASDAQ_URL = "https://en.wikipedia.org/wiki/Nasdaq-100"
 
 
 def save(path, obj):
+    path.parent.mkdir(parents=True, exist_ok=True)
     temp = path.with_suffix(path.suffix + ".tmp")
     temp.write_text(json.dumps(obj, indent=2, allow_nan=False) + "\n")
     temp.replace(path)
@@ -183,8 +187,23 @@ def main():
     now = datetime.now(timezone.utc).isoformat()
     symbols = constituents()
     quotes, errors = fetch_prices(symbols)
-    if len(quotes) < 80:
-        raise RuntimeError(f"Only {len(quotes)}/{len(symbols)} valid quotes; no state changed")
+    if len(quotes) != len(symbols):
+        raise RuntimeError(f"Only {len(quotes)}/{len(symbols)} valid quotes; refusing incomplete Nasdaq-100 scan")
+    if SCAN_ONLY:
+        report = {"timestamp": now, "mode": "PAPER_ONLY_SHORT_V4_SCAN_ONLY",
+                  "universe_count": len(symbols), "analyzed_count": len(quotes),
+                  "short_signals": sum(q["signal"] == "SHORT" for q in quotes.values()),
+                  "results": sorted(quotes.values(), key=lambda q: (q["signal"] != "SHORT", q["rsi"])),
+                  "errors": errors, "events": [], "positions": [],
+                  "note": "Signals only. No paper orders or position/PnL changes. Daily bars are not live execution prices."}
+        save(REPORT, report)
+        print(json.dumps({"event": "scan_complete", "timestamp": now,
+                          "symbols_scanned": len(quotes),
+                          "short_signals": report["short_signals"],
+                          "mode": report["mode"]}), flush=True)
+        return
+    if os.getenv("DATA_DIR") is None or not DATA_DIR.is_dir():
+        raise RuntimeError("Paper trading requires persistent DATA_DIR volume; refusing ephemeral state")
     state = load_state()
     ny_now = datetime.now(ZoneInfo("America/New_York"))
     market_open = (ny_now.weekday() < 5 and
