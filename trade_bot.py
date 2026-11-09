@@ -252,7 +252,7 @@ def main():
         remaining_exposure = max(0.0, equity * MAX_GROSS_EXPOSURE - gross)
         notional = min(equity * RISK_PER_TRADE / STOP_PCT,
                        remaining_risk / STOP_PCT, remaining_exposure,
-                       equity * MAX_GROSS_EXPOSURE / MAX_POSITIONS)
+                       remaining_exposure)
         if notional < 1.0:
             break
         price = item["price"]
