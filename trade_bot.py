@@ -19,6 +19,7 @@ MAX_POSITIONS = 15
 STOP_PCT = 0.05
 TAKE_PCT = 0.10
 MAX_GROSS_EXPOSURE = 1.5
+MAX_SINGLE_POSITION_EXPOSURE = 0.10
 DATA_DIR = Path(os.getenv("DATA_DIR", ".")).resolve()
 STATE = DATA_DIR / "paper_state_v4.json"
 REPORT = DATA_DIR / "report_v4.json"
@@ -252,7 +253,8 @@ def main():
         remaining_exposure = max(0.0, equity * MAX_GROSS_EXPOSURE - gross)
         notional = min(equity * RISK_PER_TRADE / STOP_PCT,
                        remaining_risk / STOP_PCT, remaining_exposure,
-                       remaining_exposure)
+                       remaining_exposure,
+                       equity * MAX_SINGLE_POSITION_EXPOSURE)
         if notional < 1.0:
             break
         price = item["price"]
@@ -279,6 +281,7 @@ def main():
         "max_portfolio_risk": MAX_PORTFOLIO_RISK,
         "max_positions": MAX_POSITIONS,
         "max_gross_exposure": MAX_GROSS_EXPOSURE,
+        "max_single_position_exposure": MAX_SINGLE_POSITION_EXPOSURE,
         "universe_count": len(symbols), "analyzed_count": len(quotes),
         "short_signals": sum(q["signal"] == "SHORT" for q in quotes.values()),
         "starting_capital_usd": CAPITAL,
