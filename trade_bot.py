@@ -186,6 +186,10 @@ def main():
     if len(quotes) < 80:
         raise RuntimeError(f"Only {len(quotes)}/{len(symbols)} valid quotes; no state changed")
     state = load_state()
+    ny_now = datetime.now(ZoneInfo("America/New_York"))
+    market_open = (ny_now.weekday() < 5 and
+                   (ny_now.hour, ny_now.minute) >= (9, 30) and
+                   (ny_now.hour, ny_now.minute) < (16, 0))
     events = []
     kept = []
     for pos in state["positions"]:
@@ -194,7 +198,7 @@ def main():
             kept.append(pos)
             continue
         price = item["price"]
-        if price >= pos["stop_price"] or price <= pos["take_price"]:
+        if market_open and (price >= pos["stop_price"] or price <= pos["take_price"]):
             pnl = (pos["entry_price"] - price) * pos["quantity"]
             trade = {**pos, "exit_price": price, "exit_time": now,
                      "realized_pnl_usd": round(pnl, 4),
@@ -220,10 +224,6 @@ def main():
     )
     # No new simulated fills outside regular US market hours.
     # Daily candles remain reference data, NOT intraday execution prices.
-    ny_now = datetime.now(ZoneInfo("America/New_York"))
-    market_open = (ny_now.weekday() < 5 and
-                   (ny_now.hour, ny_now.minute) >= (9, 30) and
-                   (ny_now.hour, ny_now.minute) < (16, 0))
     if not market_open:
         candidates = []
     for item in candidates:
