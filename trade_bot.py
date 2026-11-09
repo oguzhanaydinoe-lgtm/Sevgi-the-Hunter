@@ -210,6 +210,10 @@ def main():
     market_open = (ny_now.weekday() < 5 and
                    (ny_now.hour, ny_now.minute) >= (9, 30) and
                    (ny_now.hour, ny_now.minute) < (16, 0))
+    # Require today's New York bar for simulated executions.
+    current_bar_date = str(ny_now.date())
+    executable_quotes = {symbol: q for symbol, q in quotes.items()
+                         if q["bar_date"] == current_bar_date}
     events = []
     kept = []
     for pos in state["positions"]:
@@ -218,7 +222,7 @@ def main():
             kept.append(pos)
             continue
         price = item["price"]
-        if market_open and (price >= pos["stop_price"] or price <= pos["take_price"]):
+        if market_open and pos["symbol"] in executable_quotes and (price >= pos["stop_price"] or price <= pos["take_price"]):
             pnl = (pos["entry_price"] - price) * pos["quantity"]
             trade = {**pos, "exit_price": price, "exit_time": now,
                      "realized_pnl_usd": round(pnl, 4),
@@ -237,7 +241,7 @@ def main():
     gross = sum(p["entry_price"] * p["quantity"] for p in kept)
     risk = sum(max(0.0, (p["stop_price"] - p["entry_price"]) * p["quantity"]) for p in kept)
     candidates = sorted(
-        (q for q in quotes.values() if q["signal"] == "SHORT"
+        (q for q in executable_quotes.values() if q["signal"] == "SHORT"
          and q["symbol"] not in {p["symbol"] for p in kept}
          and state["last_processed_bar"].get(q["symbol"]) != q["bar_date"]),
         key=lambda q: q["rsi"],
@@ -277,6 +281,7 @@ def main():
     report = {
         "timestamp": now, "mode": "PAPER_ONLY_SHORT_V4",
         "market_open_for_new_entries": market_open,
+        "current_day_executable_quotes": len(executable_quotes),
         "risk_per_trade": RISK_PER_TRADE,
         "max_portfolio_risk": MAX_PORTFOLIO_RISK,
         "max_positions": MAX_POSITIONS,
