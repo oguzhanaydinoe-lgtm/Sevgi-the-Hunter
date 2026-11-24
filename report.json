@@ -1,59 +1,89 @@
 {
-  "timestamp": "2026-11-23T23:20:25.995086+00:00",
+  "timestamp": "2026-11-24T23:20:20.841006+00:00",
   "mode": "PAPER_ONLY",
   "starting_capital_usd": 100.0,
-  "realized_pnl_usd": 14.1366,
-  "unrealized_pnl_usd": null,
-  "estimated_equity_usd": null,
+  "realized_pnl_usd": 8.7085,
+  "unrealized_pnl_usd": 0.0,
+  "estimated_equity_usd": 108.7085,
   "position": {
-    "symbol": "NVDA",
-    "entry_price": 125.53,
-    "quantity": 0.18184753,
-    "entry_time": "2026-11-20T23:14:02.695521+00:00",
-    "stop_price": 131.8065,
-    "take_price": 112.977,
-    "entry_bar_date": "2026-11-20"
+    "symbol": "AMD",
+    "entry_price": 413.27,
+    "quantity": 0.05260895,
+    "entry_time": "2026-11-24T23:20:20.841006+00:00",
+    "stop_price": 433.9335,
+    "take_price": 371.943,
+    "entry_bar_date": "2026-11-24"
   },
-  "events": [],
+  "events": [
+    {
+      "action": "CLOSE_SHORT",
+      "symbol": "NVDA",
+      "entry_price": 125.53,
+      "quantity": 0.18184753,
+      "entry_time": "2026-11-20T23:14:02.695521+00:00",
+      "stop_price": 131.8065,
+      "take_price": 112.977,
+      "entry_bar_date": "2026-11-20",
+      "exit_price": 155.38,
+      "exit_time": "2026-11-24T23:20:20.841006+00:00",
+      "realized_pnl_usd": -5.4281,
+      "exit_reason": "STOP"
+    },
+    {
+      "action": "OPEN_SHORT",
+      "symbol": "AMD",
+      "entry_price": 413.27,
+      "quantity": 0.05260895,
+      "entry_time": "2026-11-24T23:20:20.841006+00:00",
+      "stop_price": 433.9335,
+      "take_price": 371.943,
+      "entry_bar_date": "2026-11-24"
+    }
+  ],
   "results": [
     {
+      "symbol": "NVDA",
+      "price": 155.38,
+      "rsi": 39.3,
+      "signal": "SHORT",
+      "bar_date": "2026-11-24"
+    },
+    {
       "symbol": "TSLA",
-      "price": 385.46,
-      "rsi": 52.14,
+      "price": 384.68,
+      "rsi": 51.66,
       "signal": "WAIT",
-      "bar_date": "2026-11-23"
+      "bar_date": "2026-11-24"
     },
     {
       "symbol": "AMD",
-      "price": 453.46,
-      "rsi": 42.92,
+      "price": 413.27,
+      "rsi": 38.67,
       "signal": "SHORT",
-      "bar_date": "2026-11-23"
+      "bar_date": "2026-11-24"
     },
     {
       "symbol": "PLTR",
-      "price": 159.36,
-      "rsi": 41.33,
-      "signal": "SHORT",
-      "bar_date": "2026-11-23"
+      "price": 161.18,
+      "rsi": 43.49,
+      "signal": "WAIT",
+      "bar_date": "2026-11-24"
     },
     {
       "symbol": "AAPL",
-      "price": 349.08,
-      "rsi": 52.74,
+      "price": 354.07,
+      "rsi": 57.25,
       "signal": "WAIT",
-      "bar_date": "2026-11-23"
+      "bar_date": "2026-11-24"
     },
     {
       "symbol": "QQQ",
-      "price": 651.03,
-      "rsi": 42.33,
-      "signal": "SHORT",
-      "bar_date": "2026-11-23"
+      "price": 638.1,
+      "rsi": 39.44,
+      "signal": "WAIT",
+      "bar_date": "2026-11-24"
     }
   ],
-  "errors": {
-    "NVDA": "Large daily price jump; verify market data"
-  },
+  "errors": {},
   "assumptions": "Daily closing-price simulation, fractional shares, no borrow fees, slippage, commissions or intraday stops. No real broker orders."
 }
