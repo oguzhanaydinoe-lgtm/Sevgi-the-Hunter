@@ -13,12 +13,13 @@ import requests
 import yfinance as yf
 
 CAPITAL = 100.0
-RISK_PER_TRADE = 0.05
-MAX_PORTFOLIO_RISK = 0.25
-MAX_POSITIONS = 15
+RISK_PER_TRADE = 0.01
+MAX_PORTFOLIO_RISK = 0.05
+MAX_POSITIONS = 8
 STOP_PCT = 0.05
 TAKE_PCT = 0.10
-MAX_GROSS_EXPOSURE = 1.5
+MAX_GROSS_EXPOSURE = 1.0
+MAX_DIRECTION_EXPOSURE = 0.60
 MAX_SINGLE_POSITION_EXPOSURE = 0.10
 DATA_DIR = Path(os.getenv("DATA_DIR", ".")).resolve()
 STATE = DATA_DIR / "paper_state_v4.json"
@@ -266,8 +267,18 @@ def main():
     )
     missing_positions = sorted({p["symbol"] for p in kept if p["symbol"] not in executable_quotes})
     # Never size new positions using incomplete or prior-day portfolio marks.
-    gross = sum(p["entry_price"] * p["quantity"] for p in kept)
-    risk = sum(abs(p["stop_price"] - p["entry_price"]) * p["quantity"] for p in kept)
+    # Current reference marks, not entry notionals; incomplete marks block entries.
+    def mark(p):
+        return quotes.get(p["symbol"], {}).get("price", p["entry_price"])
+    directional = {s: sum(mark(p) * p["quantity"] for p in kept if side(p) == s)
+                   for s in ("LONG", "SHORT")}
+    gross = sum(directional.values())
+    risk = sum(max(0.0, (mark(p) - p["stop_price"]) if side(p) == "LONG"
+                   else (p["stop_price"] - mark(p))) * p["quantity"] for p in kept)
+    legacy_over_limit = (len(kept) > MAX_POSITIONS or gross > equity * MAX_GROSS_EXPOSURE
+                         or risk > equity * MAX_PORTFOLIO_RISK
+                         or any(v > equity * MAX_DIRECTION_EXPOSURE for v in directional.values())
+                         or any(mark(p) * p["quantity"] > equity * MAX_SINGLE_POSITION_EXPOSURE for p in kept))
     candidates = sorted(
         (q for q in executable_quotes.values() if q["signal"] in ("SHORT", "LONG")
          and q["symbol"] not in {p["symbol"] for p in kept}
@@ -276,7 +287,7 @@ def main():
     )
     # No new simulated fills outside regular US market hours.
     # Daily candles remain reference data, NOT intraday execution prices.
-    if not market_open or missing_positions:
+    if not market_open or missing_positions or legacy_over_limit:
         candidates = []
     for item in candidates:
         if len(state["positions"]) >= MAX_POSITIONS or equity <= 0:
@@ -285,12 +296,12 @@ def main():
         remaining_exposure = max(0.0, equity * MAX_GROSS_EXPOSURE - gross)
         notional = min(equity * RISK_PER_TRADE / STOP_PCT,
                        remaining_risk / STOP_PCT, remaining_exposure,
-                       remaining_exposure,
+                       max(0.0, equity * MAX_DIRECTION_EXPOSURE - directional[item["signal"]]),
                        equity * MAX_SINGLE_POSITION_EXPOSURE)
         if notional < 1.0:
-            break
+            continue
         price = item["price"]
-        qty = round(notional / price, 8)
+        qty = math.floor(notional / price * 1e8) / 1e8
         if qty <= 0:
             continue
         direction = 1 if item["signal"] == "LONG" else -1
@@ -298,10 +309,15 @@ def main():
                "entry_time": now, "stop_price": round(price * (1 - direction * STOP_PCT), 4),
                "take_price": round(price * (1 + direction * TAKE_PCT), 4),
                "entry_bar_date": item["bar_date"]}
+        actual_risk = abs(pos["stop_price"] - price) * qty
+        actual_notional = price * qty
+        if actual_risk > min(equity * RISK_PER_TRADE, remaining_risk) or actual_notional > notional:
+            continue
         state["positions"].append(pos)
         state["last_processed_bar"][item["symbol"]] = item["bar_date"]
-        gross += notional
-        risk += notional * STOP_PCT
+        gross += actual_notional
+        directional[item["signal"]] += actual_notional
+        risk += actual_risk
         events.append({"action": "OPEN_" + item["signal"], **pos})
     unrealized = sum(
         pnl(p, quotes[p["symbol"]]["price"])
@@ -314,6 +330,11 @@ def main():
         "risk_per_trade": RISK_PER_TRADE,
         "max_portfolio_risk": MAX_PORTFOLIO_RISK,
         "max_positions": MAX_POSITIONS,
+        "max_direction_exposure": MAX_DIRECTION_EXPOSURE,
+        "gross_exposure_usd": None if missing_positions else round(gross, 4),
+        "directional_exposure_usd": None if missing_positions else directional,
+        "remaining_stop_risk_usd": None if missing_positions else round(risk, 4),
+        "legacy_over_limit": None if missing_positions else legacy_over_limit,
         "max_gross_exposure": MAX_GROSS_EXPOSURE,
         "max_single_position_exposure": MAX_SINGLE_POSITION_EXPOSURE,
         "universe_count": len(symbols), "analyzed_count": len(quotes),
@@ -339,7 +360,8 @@ def main():
         "universe_count", "analyzed_count", "short_signals", "positions",
         "events", "estimated_equity_usd", "timestamp", "realized_pnl_usd",
         "unrealized_pnl_usd", "missing_open_position_symbols", "unrealized_pnl_partial",
-        "long_unrealized_pnl_usd", "short_unrealized_pnl_usd")}, indent=2))
+        "long_unrealized_pnl_usd", "short_unrealized_pnl_usd",
+        "gross_exposure_usd", "directional_exposure_usd", "remaining_stop_risk_usd", "legacy_over_limit")}, indent=2))
 
 
 if __name__ == "__main__":
