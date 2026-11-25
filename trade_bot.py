@@ -218,10 +218,7 @@ def main():
                   "short_signals": sum(q["signal"] == "SHORT" for q in quotes.values()),
         "long_signals": sum(q["signal"] == "LONG" for q in quotes.values()),
         "missing_symbols": missing,
-        "missing_open_position_symbols": sorted({p["symbol"] for p in state["positions"] if p["symbol"] not in quotes}),
-        "unrealized_pnl_partial": any(p["symbol"] not in quotes for p in state["positions"]),
-                  "long_signals": sum(q["signal"] == "LONG" for q in quotes.values()),
-                  "missing_symbols": missing,
+
                   "results": sorted(quotes.values(), key=lambda q: (q["signal"] != "SHORT", q["rsi"])),
                   "errors": errors, "events": [], "positions": [],
                   "note": "Signals only. No paper orders or position/PnL changes. Daily bars are not live execution prices."}
@@ -267,7 +264,8 @@ def main():
         pnl(p, quotes[p["symbol"]]["price"])
         for p in kept if p["symbol"] in quotes
     )
-    # Conservative allocation: no leverage; risk budget uses remaining stop loss.
+    missing_positions = sorted({p["symbol"] for p in kept if p["symbol"] not in executable_quotes})
+    # Never size new positions using incomplete or prior-day portfolio marks.
     gross = sum(p["entry_price"] * p["quantity"] for p in kept)
     risk = sum(abs(p["stop_price"] - p["entry_price"]) * p["quantity"] for p in kept)
     candidates = sorted(
@@ -278,7 +276,7 @@ def main():
     )
     # No new simulated fills outside regular US market hours.
     # Daily candles remain reference data, NOT intraday execution prices.
-    if not market_open:
+    if not market_open or missing_positions:
         candidates = []
     for item in candidates:
         if len(state["positions"]) >= MAX_POSITIONS or equity <= 0:
@@ -322,10 +320,14 @@ def main():
         "short_signals": sum(q["signal"] == "SHORT" for q in quotes.values()),
         "starting_capital_usd": CAPITAL,
         "realized_pnl_usd": state["realized_pnl_usd"],
-        "unrealized_pnl_usd": round(unrealized, 4),
-        "long_unrealized_pnl_usd": round(sum(pnl(p, quotes[p["symbol"]]["price"]) for p in state["positions"] if side(p) == "LONG" and p["symbol"] in quotes), 4),
-        "short_unrealized_pnl_usd": round(sum(pnl(p, quotes[p["symbol"]]["price"]) for p in state["positions"] if side(p) == "SHORT" and p["symbol"] in quotes), 4),
-        "estimated_equity_usd": round(CAPITAL + state["realized_pnl_usd"] + unrealized, 4),
+        "missing_symbols": missing,
+        "missing_open_position_symbols": missing_positions,
+        "unrealized_pnl_partial": bool(missing_positions),
+        "new_entries_blocked_by_missing_marks": bool(missing_positions),
+        "unrealized_pnl_usd": None if missing_positions else round(unrealized, 4),
+        "long_unrealized_pnl_usd": None if missing_positions else round(sum(pnl(p, quotes[p["symbol"]]["price"]) for p in state["positions"] if side(p) == "LONG" and p["symbol"] in quotes), 4),
+        "short_unrealized_pnl_usd": None if missing_positions else round(sum(pnl(p, quotes[p["symbol"]]["price"]) for p in state["positions"] if side(p) == "SHORT" and p["symbol"] in quotes), 4),
+        "estimated_equity_usd": None if missing_positions else round(CAPITAL + state["realized_pnl_usd"] + unrealized, 4),
         "positions": state["positions"], "events": events,
         "results": sorted(quotes.values(), key=lambda q: (q["signal"] != "SHORT", q["rsi"])),
         "errors": errors,
@@ -335,7 +337,9 @@ def main():
     save(REPORT, report)
     print(json.dumps({k: report[k] for k in (
         "universe_count", "analyzed_count", "short_signals", "positions",
-        "events", "estimated_equity_usd")}, indent=2))
+        "events", "estimated_equity_usd", "timestamp", "realized_pnl_usd",
+        "unrealized_pnl_usd", "missing_open_position_symbols", "unrealized_pnl_partial",
+        "long_unrealized_pnl_usd", "short_unrealized_pnl_usd")}, indent=2))
 
 
 if __name__ == "__main__":
