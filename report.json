@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-11-24T23:20:20.841006+00:00",
+  "timestamp": "2026-11-25T23:20:40.772802+00:00",
   "mode": "PAPER_ONLY",
   "starting_capital_usd": 100.0,
   "realized_pnl_usd": 8.7085,
-  "unrealized_pnl_usd": 0.0,
-  "estimated_equity_usd": 108.7085,
+  "unrealized_pnl_usd": 0.3809,
+  "estimated_equity_usd": 109.0894,
   "position": {
     "symbol": "AMD",
     "entry_price": 413.27,
@@ -14,74 +14,49 @@
     "take_price": 371.943,
     "entry_bar_date": "2026-11-24"
   },
-  "events": [
-    {
-      "action": "CLOSE_SHORT",
-      "symbol": "NVDA",
-      "entry_price": 125.53,
-      "quantity": 0.18184753,
-      "entry_time": "2026-11-20T23:14:02.695521+00:00",
-      "stop_price": 131.8065,
-      "take_price": 112.977,
-      "entry_bar_date": "2026-11-20",
-      "exit_price": 155.38,
-      "exit_time": "2026-11-24T23:20:20.841006+00:00",
-      "realized_pnl_usd": -5.4281,
-      "exit_reason": "STOP"
-    },
-    {
-      "action": "OPEN_SHORT",
-      "symbol": "AMD",
-      "entry_price": 413.27,
-      "quantity": 0.05260895,
-      "entry_time": "2026-11-24T23:20:20.841006+00:00",
-      "stop_price": 433.9335,
-      "take_price": 371.943,
-      "entry_bar_date": "2026-11-24"
-    }
-  ],
+  "events": [],
   "results": [
     {
       "symbol": "NVDA",
-      "price": 155.38,
-      "rsi": 39.3,
+      "price": 149.3,
+      "rsi": 38.58,
       "signal": "SHORT",
-      "bar_date": "2026-11-24"
+      "bar_date": "2026-11-25"
     },
     {
       "symbol": "TSLA",
-      "price": 384.68,
-      "rsi": 51.66,
+      "price": 380.14,
+      "rsi": 50.66,
       "signal": "WAIT",
-      "bar_date": "2026-11-24"
+      "bar_date": "2026-11-25"
     },
     {
       "symbol": "AMD",
-      "price": 413.27,
-      "rsi": 38.67,
+      "price": 406.03,
+      "rsi": 37.92,
       "signal": "SHORT",
-      "bar_date": "2026-11-24"
+      "bar_date": "2026-11-25"
     },
     {
       "symbol": "PLTR",
-      "price": 161.18,
-      "rsi": 43.49,
+      "price": 163.59,
+      "rsi": 45.78,
       "signal": "WAIT",
-      "bar_date": "2026-11-24"
+      "bar_date": "2026-11-25"
     },
     {
       "symbol": "AAPL",
-      "price": 354.07,
-      "rsi": 57.25,
+      "price": 355.58,
+      "rsi": 58.2,
       "signal": "WAIT",
-      "bar_date": "2026-11-24"
+      "bar_date": "2026-11-25"
     },
     {
       "symbol": "QQQ",
-      "price": 638.1,
-      "rsi": 39.44,
-      "signal": "WAIT",
-      "bar_date": "2026-11-24"
+      "price": 633.93,
+      "rsi": 38.93,
+      "signal": "SHORT",
+      "bar_date": "2026-11-25"
     }
   ],
   "errors": {},
