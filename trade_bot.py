@@ -34,6 +34,40 @@ def save(path, obj):
     temp.replace(path)
 
 
+
+def persistence_audit(state, report):
+    """Read back persisted V4 files; report failures without modifying state."""
+    import hashlib
+    result = {"event": "persistence_audit", "timestamp": datetime.now(timezone.utc).isoformat(),
+              "report_timestamp": report["timestamp"], "files": {}, "status": "FAIL"}
+    try:
+        loaded = {}
+        for path, expected in ((STATE, state), (REPORT, report)):
+            raw = path.read_bytes()
+            actual = json.loads(raw)
+            stat = path.stat()
+            loaded[path.name] = actual
+            result["files"][path.name] = {
+                "path": str(path), "json_valid": True, "readback_verified": actual == expected,
+                "bytes": len(raw), "sha256": hashlib.sha256(raw).hexdigest(),
+                "modified_at": datetime.fromtimestamp(stat.st_mtime, timezone.utc).isoformat()}
+        s, r = loaded[STATE.name], loaded[REPORT.name]
+        result["positions"] = len(s["positions"])
+        result["financial_consistency"] = (
+            s["positions"] == r["positions"]
+            and s["realized_pnl_usd"] == r["realized_pnl_usd"]
+            and (r["estimated_equity_usd"] is None if r["unrealized_pnl_partial"] else
+                 math.isclose(r["estimated_equity_usd"],
+                              r["starting_capital_usd"] + r["realized_pnl_usd"] + r["unrealized_pnl_usd"],
+                              rel_tol=0, abs_tol=0.0002)))
+        result["status"] = "PASS" if (
+            result["financial_consistency"] and
+            all(f["readback_verified"] for f in result["files"].values())) else "FAIL"
+    except Exception as exc:
+        result["error"] = f"{type(exc).__name__}: {exc}"
+    print(json.dumps(result, allow_nan=False), flush=True)
+
+
 def constituents():
     """Fetch the full Nasdaq-100 universe from independent sources; never use a partial list."""
     import re
@@ -335,6 +369,7 @@ def main():
     }
     save(STATE, state)
     save(REPORT, report)
+    persistence_audit(state, report)
     print(json.dumps({k: report[k] for k in (
         "universe_count", "analyzed_count", "short_signals", "positions",
         "events", "estimated_equity_usd", "timestamp", "realized_pnl_usd",
