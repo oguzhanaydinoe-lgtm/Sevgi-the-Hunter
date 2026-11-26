@@ -246,6 +246,12 @@ def main():
     for q in quotes.values():
         if q["signal"] == "WAIT" and q["price"] > q["ema20"] > q["ema50"] and q["rsi"] > 55 and q["high_volume"]:
             q["signal"] = "LONG"
+    if os.getenv("DATA_DIR") and DATA_DIR.is_dir():
+        from research_v4 import record_scan
+        try:
+            record_scan(DATA_DIR, quotes, errors, symbols, now)
+        except Exception as exc:
+            print(json.dumps({"event":"research_failed","error":str(exc),"timestamp":now}),flush=True)
     if SCAN_ONLY:
         report = {"timestamp": now, "mode": "PAPER_ONLY_BIDIRECTIONAL_V4_SCAN_ONLY",
                   "universe_count": len(symbols), "analyzed_count": len(quotes),
@@ -370,6 +376,8 @@ def main():
     save(STATE, state)
     save(REPORT, report)
     persistence_audit(state, report)
+    from lion_v1 import audit
+    audit(DATA_DIR)
     print(json.dumps({k: report[k] for k in (
         "universe_count", "analyzed_count", "short_signals", "positions",
         "events", "estimated_equity_usd", "timestamp", "realized_pnl_usd",
