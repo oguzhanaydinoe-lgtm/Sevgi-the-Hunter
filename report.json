@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-11-26T23:25:10.937776+00:00",
+  "timestamp": "2026-11-27T23:22:39.694293+00:00",
   "mode": "PAPER_ONLY",
   "starting_capital_usd": 100.0,
   "realized_pnl_usd": 8.7085,
-  "unrealized_pnl_usd": 0.3809,
-  "estimated_equity_usd": 109.0894,
+  "unrealized_pnl_usd": -0.5929,
+  "estimated_equity_usd": 108.1156,
   "position": {
     "symbol": "AMD",
     "entry_price": 413.27,
@@ -18,45 +18,45 @@
   "results": [
     {
       "symbol": "NVDA",
-      "price": 149.3,
-      "rsi": 38.58,
-      "signal": "SHORT",
-      "bar_date": "2026-11-25"
+      "price": 150.49,
+      "rsi": 38.27,
+      "signal": "WAIT",
+      "bar_date": "2026-11-27"
     },
     {
       "symbol": "TSLA",
-      "price": 380.14,
-      "rsi": 50.66,
+      "price": 400.0,
+      "rsi": 57.08,
       "signal": "WAIT",
-      "bar_date": "2026-11-25"
+      "bar_date": "2026-11-27"
     },
     {
       "symbol": "AMD",
-      "price": 406.03,
-      "rsi": 37.92,
-      "signal": "SHORT",
-      "bar_date": "2026-11-25"
+      "price": 424.54,
+      "rsi": 40.92,
+      "signal": "WAIT",
+      "bar_date": "2026-11-27"
     },
     {
       "symbol": "PLTR",
-      "price": 163.59,
-      "rsi": 45.78,
+      "price": 172.17,
+      "rsi": 51.41,
       "signal": "WAIT",
-      "bar_date": "2026-11-25"
+      "bar_date": "2026-11-27"
     },
     {
       "symbol": "AAPL",
-      "price": 355.58,
-      "rsi": 58.2,
+      "price": 358.54,
+      "rsi": 59.95,
       "signal": "WAIT",
-      "bar_date": "2026-11-25"
+      "bar_date": "2026-11-27"
     },
     {
       "symbol": "QQQ",
-      "price": 633.93,
-      "rsi": 38.93,
-      "signal": "SHORT",
-      "bar_date": "2026-11-25"
+      "price": 650.99,
+      "rsi": 44.0,
+      "signal": "WAIT",
+      "bar_date": "2026-11-27"
     }
   ],
   "errors": {},
