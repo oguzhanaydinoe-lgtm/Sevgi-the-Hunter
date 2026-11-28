@@ -5,6 +5,7 @@ import os
 import time
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
+from market_calendar import is_market_open
 from io import StringIO
 from pathlib import Path
 
@@ -267,9 +268,7 @@ def main():
         raise RuntimeError("Paper trading requires persistent DATA_DIR volume; refusing ephemeral state")
     state = load_state()
     ny_now = datetime.now(ZoneInfo("America/New_York"))
-    market_open = (ny_now.weekday() < 5 and
-                   (ny_now.hour, ny_now.minute) >= (9, 30) and
-                   (ny_now.hour, ny_now.minute) < (16, 0))
+    market_open = is_market_open(ny_now)
     # Require today's New York bar for simulated executions.
     current_bar_date = str(ny_now.date())
     executable_quotes = {symbol: q for symbol, q in quotes.items()

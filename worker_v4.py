@@ -5,6 +5,7 @@ import time
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 from trade_bot import main
+from market_calendar import is_market_open
 
 INTERVAL_SECONDS = max(300, int(os.getenv("SCAN_INTERVAL_SECONDS", "300")))
 
@@ -17,8 +18,8 @@ if __name__ == "__main__":
         started = time.monotonic()
         try:
             ny = datetime.now(ZoneInfo("America/New_York"))
-            # Scan on US trading days; retain process and heartbeat outside hours.
-            if ny.weekday() < 5 and (9, 30) <= (ny.hour, ny.minute) < (16, 0):
+            # Use exchange calendar including holidays and early closes.
+            if is_market_open(ny):
                 main()
             else:
                 log("market_closed", local_time=ny.isoformat())
