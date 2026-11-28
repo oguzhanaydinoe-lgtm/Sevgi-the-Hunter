@@ -1,8 +1,11 @@
-"""Nasdaq-100 paper-only short scanner. No broker connectivity."""
+"""Nasdaq-100 paper-only LONG/SHORT scanner. No broker connectivity."""
 import json
 import math
+import os
 import time
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
+from market_calendar import is_market_open
 from io import StringIO
 from pathlib import Path
 
@@ -12,20 +15,58 @@ import yfinance as yf
 
 CAPITAL = 100.0
 RISK_PER_TRADE = 0.05
-MAX_PORTFOLIO_RISK = 0.10
-MAX_POSITIONS = 3
+MAX_PORTFOLIO_RISK = 0.25
+MAX_POSITIONS = 15
 STOP_PCT = 0.05
 TAKE_PCT = 0.10
-MAX_GROSS_EXPOSURE = 1.0
-STATE = Path("paper_state_v4.json")
-REPORT = Path("report_v4.json")
+MAX_GROSS_EXPOSURE = 1.5
+MAX_SINGLE_POSITION_EXPOSURE = 0.10
+DATA_DIR = Path(os.getenv("DATA_DIR", ".")).resolve()
+STATE = DATA_DIR / "paper_state_v4.json"
+REPORT = DATA_DIR / "report_v4.json"
+SCAN_ONLY = os.getenv("SCAN_ONLY", "1") == "1"
 NASDAQ_URL = "https://en.wikipedia.org/wiki/Nasdaq-100"
 
 
 def save(path, obj):
+    path.parent.mkdir(parents=True, exist_ok=True)
     temp = path.with_suffix(path.suffix + ".tmp")
     temp.write_text(json.dumps(obj, indent=2, allow_nan=False) + "\n")
     temp.replace(path)
+
+
+
+def persistence_audit(state, report):
+    """Read back persisted V4 files; report failures without modifying state."""
+    import hashlib
+    result = {"event": "persistence_audit", "timestamp": datetime.now(timezone.utc).isoformat(),
+              "report_timestamp": report["timestamp"], "files": {}, "status": "FAIL"}
+    try:
+        loaded = {}
+        for path, expected in ((STATE, state), (REPORT, report)):
+            raw = path.read_bytes()
+            actual = json.loads(raw)
+            stat = path.stat()
+            loaded[path.name] = actual
+            result["files"][path.name] = {
+                "path": str(path), "json_valid": True, "readback_verified": actual == expected,
+                "bytes": len(raw), "sha256": hashlib.sha256(raw).hexdigest(),
+                "modified_at": datetime.fromtimestamp(stat.st_mtime, timezone.utc).isoformat()}
+        s, r = loaded[STATE.name], loaded[REPORT.name]
+        result["positions"] = len(s["positions"])
+        result["financial_consistency"] = (
+            s["positions"] == r["positions"]
+            and s["realized_pnl_usd"] == r["realized_pnl_usd"]
+            and (r["estimated_equity_usd"] is None if r["unrealized_pnl_partial"] else
+                 math.isclose(r["estimated_equity_usd"],
+                              r["starting_capital_usd"] + r["realized_pnl_usd"] + r["unrealized_pnl_usd"],
+                              rel_tol=0, abs_tol=0.0002)))
+        result["status"] = "PASS" if (
+            result["financial_consistency"] and
+            all(f["readback_verified"] for f in result["files"].values())) else "FAIL"
+    except Exception as exc:
+        result["error"] = f"{type(exc).__name__}: {exc}"
+    print(json.dumps(result, allow_nan=False), flush=True)
 
 
 def constituents():
@@ -178,13 +219,60 @@ def fetch_prices(symbols):
     return quotes, errors
 
 
+def side(pos):
+    return pos.get("side", "SHORT")  # V4 legacy positions remain shorts
+
+
+def pnl(pos, price):
+    return (price - pos["entry_price"]) * pos["quantity"] * (1 if side(pos) == "LONG" else -1)
+
+
+def exit_reason(pos, price):
+    if side(pos) == "LONG":
+        return "STOP" if price <= pos["stop_price"] else ("TAKE_PROFIT" if price >= pos["take_price"] else None)
+    return "STOP" if price >= pos["stop_price"] else ("TAKE_PROFIT" if price <= pos["take_price"] else None)
+
+
 def main():
     now = datetime.now(timezone.utc).isoformat()
     symbols = constituents()
     quotes, errors = fetch_prices(symbols)
-    if len(quotes) < 80:
-        raise RuntimeError(f"Only {len(quotes)}/{len(symbols)} valid quotes; no state changed")
+    missing = sorted(set(symbols) - set(quotes))
+    if missing:
+        print(json.dumps({"event": "partial_scan", "timestamp": now,
+                          "universe_count": len(symbols), "analyzed_count": len(quotes),
+                          "missing_symbols": missing, "errors": {s: errors.get(s) for s in missing}}), flush=True)
+    if len(quotes) < max(90, math.ceil(len(symbols) * 0.95)):
+        raise RuntimeError(f"Only {len(quotes)}/{len(symbols)} valid quotes; below safety threshold")
+    for q in quotes.values():
+        if q["signal"] == "WAIT" and q["price"] > q["ema20"] > q["ema50"] and q["rsi"] > 55 and q["high_volume"]:
+            q["signal"] = "LONG"
+    if SCAN_ONLY:
+        report = {"timestamp": now, "mode": "PAPER_ONLY_BIDIRECTIONAL_V4_SCAN_ONLY",
+                  "universe_count": len(symbols), "analyzed_count": len(quotes),
+                  "short_signals": sum(q["signal"] == "SHORT" for q in quotes.values()),
+        "long_signals": sum(q["signal"] == "LONG" for q in quotes.values()),
+        "missing_symbols": missing,
+
+                  "results": sorted(quotes.values(), key=lambda q: (q["signal"] != "SHORT", q["rsi"])),
+                  "errors": errors, "events": [], "positions": [],
+                  "note": "Signals only. No paper orders or position/PnL changes. Daily bars are not live execution prices."}
+        save(REPORT, report)
+        print(json.dumps({"event": "scan_complete", "timestamp": now,
+                          "symbols_scanned": len(quotes), "universe_count": len(symbols),
+                          "missing_symbols": missing,
+                          "short_signals": report["short_signals"],
+                          "mode": report["mode"]}), flush=True)
+        return
+    if os.getenv("DATA_DIR") is None or not DATA_DIR.is_dir():
+        raise RuntimeError("Paper trading requires persistent DATA_DIR volume; refusing ephemeral state")
     state = load_state()
+    ny_now = datetime.now(ZoneInfo("America/New_York"))
+    market_open = is_market_open(ny_now)
+    # Require today's New York bar for simulated executions.
+    current_bar_date = str(ny_now.date())
+    executable_quotes = {symbol: q for symbol, q in quotes.items()
+                         if q["bar_date"] == current_bar_date}
     events = []
     kept = []
     for pos in state["positions"]:
@@ -193,30 +281,36 @@ def main():
             kept.append(pos)
             continue
         price = item["price"]
-        if price >= pos["stop_price"] or price <= pos["take_price"]:
-            pnl = (pos["entry_price"] - price) * pos["quantity"]
+        reason = exit_reason(pos, price) if market_open and pos["symbol"] in executable_quotes else None
+        if reason:
+            trade_pnl = pnl(pos, price)
             trade = {**pos, "exit_price": price, "exit_time": now,
-                     "realized_pnl_usd": round(pnl, 4),
-                     "exit_reason": "STOP" if price >= pos["stop_price"] else "TAKE_PROFIT"}
+                     "realized_pnl_usd": round(trade_pnl, 4),
+                     "exit_reason": reason}
             state["trades"].append(trade)
-            state["realized_pnl_usd"] = round(state["realized_pnl_usd"] + pnl, 4)
-            events.append({"action": "CLOSE_SHORT", **trade})
+            state["realized_pnl_usd"] = round(state["realized_pnl_usd"] + trade_pnl, 4)
+            events.append({"action": "CLOSE_" + side(pos), **trade})
         else:
             kept.append(pos)
     state["positions"] = kept
     equity = CAPITAL + state["realized_pnl_usd"] + sum(
-        (p["entry_price"] - quotes[p["symbol"]]["price"]) * p["quantity"]
+        pnl(p, quotes[p["symbol"]]["price"])
         for p in kept if p["symbol"] in quotes
     )
-    # Conservative allocation: no leverage; risk budget uses remaining stop loss.
+    missing_positions = sorted({p["symbol"] for p in kept if p["symbol"] not in executable_quotes})
+    # Never size new positions using incomplete or prior-day portfolio marks.
     gross = sum(p["entry_price"] * p["quantity"] for p in kept)
-    risk = sum(max(0.0, (p["stop_price"] - p["entry_price"]) * p["quantity"]) for p in kept)
+    risk = sum(abs(p["stop_price"] - p["entry_price"]) * p["quantity"] for p in kept)
     candidates = sorted(
-        (q for q in quotes.values() if q["signal"] == "SHORT"
+        (q for q in executable_quotes.values() if q["signal"] in ("SHORT", "LONG")
          and q["symbol"] not in {p["symbol"] for p in kept}
          and state["last_processed_bar"].get(q["symbol"]) != q["bar_date"]),
-        key=lambda q: q["rsi"],
+        key=lambda q: abs(q["rsi"] - 50), reverse=True,
     )
+    # No new simulated fills outside regular US market hours.
+    # Daily candles remain reference data, NOT intraday execution prices.
+    if not market_open or missing_positions:
+        candidates = []
     for item in candidates:
         if len(state["positions"]) >= MAX_POSITIONS or equity <= 0:
             break
@@ -224,34 +318,49 @@ def main():
         remaining_exposure = max(0.0, equity * MAX_GROSS_EXPOSURE - gross)
         notional = min(equity * RISK_PER_TRADE / STOP_PCT,
                        remaining_risk / STOP_PCT, remaining_exposure,
-                       equity / MAX_POSITIONS)
+                       remaining_exposure,
+                       equity * MAX_SINGLE_POSITION_EXPOSURE)
         if notional < 1.0:
             break
         price = item["price"]
         qty = round(notional / price, 8)
         if qty <= 0:
             continue
-        pos = {"symbol": item["symbol"], "entry_price": price, "quantity": qty,
-               "entry_time": now, "stop_price": round(price * (1 + STOP_PCT), 4),
-               "take_price": round(price * (1 - TAKE_PCT), 4),
+        direction = 1 if item["signal"] == "LONG" else -1
+        pos = {"symbol": item["symbol"], "side": item["signal"], "entry_price": price, "quantity": qty,
+               "entry_time": now, "stop_price": round(price * (1 - direction * STOP_PCT), 4),
+               "take_price": round(price * (1 + direction * TAKE_PCT), 4),
                "entry_bar_date": item["bar_date"]}
         state["positions"].append(pos)
         state["last_processed_bar"][item["symbol"]] = item["bar_date"]
         gross += notional
         risk += notional * STOP_PCT
-        events.append({"action": "OPEN_SHORT", **pos})
+        events.append({"action": "OPEN_" + item["signal"], **pos})
     unrealized = sum(
-        (p["entry_price"] - quotes[p["symbol"]]["price"]) * p["quantity"]
+        pnl(p, quotes[p["symbol"]]["price"])
         for p in state["positions"] if p["symbol"] in quotes
     )
     report = {
-        "timestamp": now, "mode": "PAPER_ONLY_SHORT_V4",
+        "timestamp": now, "mode": "PAPER_ONLY_BIDIRECTIONAL_V4",
+        "market_open_for_new_entries": market_open,
+        "current_day_executable_quotes": len(executable_quotes),
+        "risk_per_trade": RISK_PER_TRADE,
+        "max_portfolio_risk": MAX_PORTFOLIO_RISK,
+        "max_positions": MAX_POSITIONS,
+        "max_gross_exposure": MAX_GROSS_EXPOSURE,
+        "max_single_position_exposure": MAX_SINGLE_POSITION_EXPOSURE,
         "universe_count": len(symbols), "analyzed_count": len(quotes),
         "short_signals": sum(q["signal"] == "SHORT" for q in quotes.values()),
         "starting_capital_usd": CAPITAL,
         "realized_pnl_usd": state["realized_pnl_usd"],
-        "unrealized_pnl_usd": round(unrealized, 4),
-        "estimated_equity_usd": round(CAPITAL + state["realized_pnl_usd"] + unrealized, 4),
+        "missing_symbols": missing,
+        "missing_open_position_symbols": missing_positions,
+        "unrealized_pnl_partial": bool(missing_positions),
+        "new_entries_blocked_by_missing_marks": bool(missing_positions),
+        "unrealized_pnl_usd": None if missing_positions else round(unrealized, 4),
+        "long_unrealized_pnl_usd": None if missing_positions else round(sum(pnl(p, quotes[p["symbol"]]["price"]) for p in state["positions"] if side(p) == "LONG" and p["symbol"] in quotes), 4),
+        "short_unrealized_pnl_usd": None if missing_positions else round(sum(pnl(p, quotes[p["symbol"]]["price"]) for p in state["positions"] if side(p) == "SHORT" and p["symbol"] in quotes), 4),
+        "estimated_equity_usd": None if missing_positions else round(CAPITAL + state["realized_pnl_usd"] + unrealized, 4),
         "positions": state["positions"], "events": events,
         "results": sorted(quotes.values(), key=lambda q: (q["signal"] != "SHORT", q["rsi"])),
         "errors": errors,
@@ -259,9 +368,12 @@ def main():
     }
     save(STATE, state)
     save(REPORT, report)
+    persistence_audit(state, report)
     print(json.dumps({k: report[k] for k in (
         "universe_count", "analyzed_count", "short_signals", "positions",
-        "events", "estimated_equity_usd")}, indent=2))
+        "events", "estimated_equity_usd", "timestamp", "realized_pnl_usd",
+        "unrealized_pnl_usd", "missing_open_position_symbols", "unrealized_pnl_partial",
+        "long_unrealized_pnl_usd", "short_unrealized_pnl_usd")}, indent=2))
 
 
 if __name__ == "__main__":
